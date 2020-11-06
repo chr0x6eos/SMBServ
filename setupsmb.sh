@@ -8,7 +8,7 @@
 ####################
 #     VARIABLES    #
 ####################
-FILES="/usr/share/windows-binaries/*" # If no other files specified, use this folder
+FILES="$(pwd)" # If no other files specified, use this folder
 VERBOSE="FALSE" # Verbosity
 START_SH="FALSE" # Start bash shell in docker-container
 
@@ -27,7 +27,7 @@ Github: https://github.com/chr0x6eos
 
 About:
 A simple SMB-server running in docker.
-By default /usr/share/windows-binaries will be served via SMB.
+By default current directory will be served.
 "
 }
 
@@ -157,7 +157,7 @@ fi
 
 # Start smb-server container
 docker run -it -p 139:139 -p 445:445 -d dperson/samba -p -s "share;/mnt/smb;yes;no;yes" 1>/dev/null
-log_if_error
+log_if_error "Could not start docker-instance!"
 
 # Get container ID
 CONTAINER=$(docker ps -f ancestor=dperson/samba -q)
