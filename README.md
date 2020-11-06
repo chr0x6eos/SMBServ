@@ -2,16 +2,16 @@
 Quick bash script to setup an smb-server via docker
 
 ## Usage
-Starting script without any args will start a docker-instance running a smb-server and will host all files in /usr/share/windows-binaries by default.
+Starting script without any args will start a docker-instance running a smb-server and will host all files in `/usr/share/windows-binaries` by default.
 ```bash
-bash setupsmb.sh
+root@kali:~# bash setupsmb.sh
 bash-5.0# ls /mnt/smb/
 enumplus       fgdump         klogger.exe    nbtenum        nc64.exe       radmin.exe     wget.exe
 exe2bat.exe    fport          mbenum         nc.exe         plink.exe      vncviewer.exe  whoami.exe
 ```
 
 ```bash
-smbclient //127.0.0.1/share
+root@kali:~# smbclient //127.0.0.1/share
 Enter WORKGROUP\root's password: 
 Try "help" to get a list of possible commands.
 smb: \> dir
@@ -38,14 +38,14 @@ smb: \>
 
 Starting the script with arguments, a txt-file can be used to specify all files that should be hosted on the smb-server.
 ```bash
-cat files.txt 
+root@kali:~# cat files.txt 
 /tmp/file1
 /tmp/file2
 /usr/share/webshells/aspx/cmdasp.aspx
 ```
 This file can now simply be supplies as an argument:
 ```bash
-bash setupsmb.sh files.txt
+root@kali:~# bash setupsmb.sh files.txt
 bash-5.0# ls /mnt/smb/
 cmdasp.aspx    fgdump         fport          nbtenum        plink.exe      wget.exe
 enumplus       file1          klogger.exe    nc.exe         radmin.exe     whoami.exe
@@ -54,7 +54,7 @@ exe2bat.exe    file2          mbenum         nc64.exe       vncviewer.exe
 The files in `/usr/share/windows-binaries` are shared by default.
 
 ```bash
-smbclient //127.0.0.1/share/
+root@kali:~# smbclient //127.0.0.1/share/
 Enter WORKGROUP\root's password: 
 Try "help" to get a list of possible commands.
 smb: \> dir
