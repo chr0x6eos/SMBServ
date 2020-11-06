@@ -89,7 +89,7 @@ info # Print info
 # Validate input parameters
 for (( i=0; i<="$#"; i++))
  do
-     if [[ "${!i}" == "-h" ]] # Print help
+   if [[ "${!i}" == "-h" ]] # Print help
     then
        usage
        exit 0
@@ -141,18 +141,19 @@ if [[ "$?" -ne 0 ]]
  then
    log "Docker service currently not running! Starting now..." 2
    service docker start
+   log_if_error "Could not start docker service!"
 fi
 
 # Check if a smb-container is already running
 CONTAINER=$(docker ps -f ancestor=dperson/samba -q)
-log_if_error
+log_if_error "Could not verify if a container is already running!"
 
-# If container already running, stop
+# If container is already running, stop the container
 if [ ! -z "$CONTAINER" ]
  then
     log "A smb-server container (ID: $CONTAINER) is already running! Stopping this container now..." 2
     docker stop "$CONTAINER" 1>/dev/null # Stop if there is always an instance running
-    log_if_error
+    log_if_error "Could not stop container!"
 fi
 
 # Start smb-server container
@@ -161,7 +162,7 @@ log_if_error "Could not start docker-instance!"
 
 # Get container ID
 CONTAINER=$(docker ps -f ancestor=dperson/samba -q)
-log_if_error
+log_if_error "Could not verify if docker-instance is running!"
 log "Smb-server (ID: $CONTAINER) started!" 1
 
 # Copy wanted files to container
@@ -169,15 +170,26 @@ for FILE in "$FILES"
  do
      log "Copying $FILE to $CONTAINER:/mnt/smb/ ..." 0
      docker cp -L "$FILE" "$CONTAINER":/mnt/smb/ 1>/dev/null # Copy files to /mnt/smb in the instance
-     log_if_error
+     log_if_error "Could not copy $FILE to container!"
  done
 
+log "DONE! :) Container (ID: $CONTAINER) is now running and serving..." 1
+
+# Check if a shell in the docker-container should be started
 if [[ "$START_SH" == "TRUE" ]]
  then
     log "Launching bash-shell in docker-container..." 1
+    echo ""
     docker exec -it "$CONTAINER" bash # Run bash in the docker instance for testing
-    log_if_error
-fi
+    log_if_error "Could not start bash-shell in docker-container!"
+else
+    # Get all local IPs and print smb-share-links
+    IPs="$(ifconfig | grep 'inet ' | cut -d ' ' -f10)"
+    echo "Your files are available at:"
+    for IP in $IPs
+     do
+       echo "  \\\\$IP\\share\\" # Print smb-share-link
+     done
+ fi
 
-log "DONE! :) Container (ID: $CONTAINER) is now running and serving..." 1
 exit 0 # Exit with no errors
