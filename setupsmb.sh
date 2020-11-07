@@ -23,7 +23,7 @@ function info { # Print info
 #    By \e[91mChr0x6eOs\e[39m   #
 #####################
 
-Github: https://github.com/chr0x6eos
+Github: https://github.com/chr0x6eos/SMBServ
 
 About:
 A simple SMB-server running in docker.
