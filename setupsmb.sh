@@ -99,7 +99,7 @@ for (( i=0; i<="$#"; i++))
         log "Verbosity set!" 0
    elif [[ "${!i}" == "-fl" ]] # Specify file-list to be served
     then
-       next_arg=$(($i+1)) # Get argument after "-f"
+       next_arg=$(($i+1)) # Get argument after "-fl"
        if [[ ! -z "$next_arg" ]] && [[ -f "${!next_arg}" ]] # Check if next parameter is set and a file
         then
            log "Loading files from config-file: ${!next_arg}..." 0
@@ -114,20 +114,20 @@ for (( i=0; i<="$#"; i++))
         next_arg=$(($i+1)) # Get argument after "-f"
         if [[ ! -z "$next_arg" ]] && [[ -f "${!next_arg}" ]] # Check if next parameter is set and a file
          then
-            log "The file ${!next_arg} will be served via SMB!" 0
+            log "The file ${!next_arg} will be served via SMB!" 1
             FILES="${!next_arg}" # Set file to be served via smb
          else
-           log "No valid file for option -f specified!" -1
+            log "No valid file for option -f specified!" -1
         fi
    elif [[ "${!i}" == "-d" ]] # Specify directory to be served
       then
          next_arg=$(($i+1)) # Get argument after "-d"
          if [[ ! -z "$next_arg" ]] && [[ -d "${!next_arg}" ]] # Check if next parameter is set and a file
           then
-             log "The directory ${!next_arg} will be served via SMB!" 0
+             log "The directory ${!next_arg} will be served via SMB!" 1
              FILES="${!next_arg}" # Set file to be served via smb
           else
-            log "No valid directory for option -d specified!" -1
+             log "No valid directory for option -d specified!" -1
          fi
    elif [[ "${!i}" == "-sh" ]] # Start bash shell in container
     then
@@ -154,6 +154,8 @@ if [ ! -z "$CONTAINER" ]
     log "A smb-server container (ID: $CONTAINER) is already running! Stopping this container now..." 2
     docker stop "$CONTAINER" 1>/dev/null # Stop if there is always an instance running
     log_if_error "Could not stop container!"
+    docker rm "$CONTAINER" 1>/dev/null # Kill the running instance
+    log_if_error "Could not kill container!"
 fi
 
 # Start smb-server container
@@ -166,7 +168,7 @@ log_if_error "Could not verify if docker-instance is running!"
 log "Smb-server (ID: $CONTAINER) started!" 1
 
 # Copy wanted files to container
-for FILE in "$FILES"
+for FILE in $FILES
  do
      log "Copying $FILE to $CONTAINER:/mnt/smb/ ..." 0
      docker cp -L "$FILE" "$CONTAINER":/mnt/smb/ 1>/dev/null # Copy files to /mnt/smb in the instance
