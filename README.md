@@ -6,7 +6,7 @@ Quick bash script to setup an smb-server via docker that serves certain files. T
 The following section will explain the usage of the script, including examples for each parameter.
 
 ```bash
-Usage: setupsmb.sh [arguments]
+Usage: /opt/SMBServ/setupsmb.sh [arguments]
 
 -h  ... Help:        Print this help message
 -v  ... Verbose:     Print detailed status messages
@@ -14,6 +14,14 @@ Usage: setupsmb.sh [arguments]
 -f  ... File:        Specify a single file to be served via SMB
 -d  ... Directory:   Specify a single directory to be served via SMB
 -sh ... Shell:       Launch a shell on the docker-container once it is setup
+```
+
+### Alias setup
+
+For ease of usage, an alias can be defined to refer to the script.
+
+```bash
+root@kali:~# alias smbserv='/opt/SMBServ/setupsmb.sh'
 ```
 
 ### Default behavior
