@@ -40,7 +40,7 @@ Usage: $0 [arguments]
 -fl ... Files-list:  Specify a list of files (specified as a file) that should be served via SMB
 -f  ... File:        Specify a single file to be served via SMB
 -d  ... Directory:   Specify a single directory to be served via SMB
--sh ... Shell:       Launch a shell on the docker-instance once it is setup
+-sh ... Shell:       Launch a bash-shell in the docker-container, once it is setup
 "
 }
 
@@ -152,26 +152,26 @@ log_if_error "Could not verify if a container is already running!"
 if [ ! -z "$CONTAINER" ]
  then
     log "A smb-server container (ID: $CONTAINER) is already running! Stopping this container now..." 2
-    docker stop "$CONTAINER" 1>/dev/null # Stop if there is always an instance running
+    docker stop "$CONTAINER" 1>/dev/null # Stop if there is always an container running
     log_if_error "Could not stop container!"
-    docker rm "$CONTAINER" 1>/dev/null # Kill the running instance
+    docker rm "$CONTAINER" 1>/dev/null # Kill the running container
     log_if_error "Could not kill container!"
 fi
 
 # Start smb-server container
 docker run -it -p 139:139 -p 445:445 -d dperson/samba -p -s "share;/mnt/smb;yes;no;yes" 1>/dev/null
-log_if_error "Could not start docker-instance!"
+log_if_error "Could not start docker-container!"
 
 # Get container ID
 CONTAINER=$(docker ps -f ancestor=dperson/samba -q)
-log_if_error "Could not verify if docker-instance is running!"
+log_if_error "Could not verify if docker-container is running!"
 log "Smb-server (ID: $CONTAINER) started!" 1
 
 # Copy wanted files to container
 for FILE in $FILES
  do
      log "Copying $FILE to $CONTAINER:/mnt/smb/ ..." 0
-     docker cp -L "$FILE" "$CONTAINER":/mnt/smb/ 1>/dev/null # Copy files to /mnt/smb in the instance
+     docker cp -L "$FILE" "$CONTAINER":/mnt/smb/ 1>/dev/null # Copy files to /mnt/smb in the container
      log_if_error "Could not copy $FILE to container!"
  done
 
@@ -182,7 +182,7 @@ if [[ "$START_SH" == "TRUE" ]]
  then
     log "Launching bash-shell in docker-container..." 1
     echo ""
-    docker exec -it "$CONTAINER" bash # Run bash in the docker instance for testing
+    docker exec -it "$CONTAINER" bash # Run bash in the docker container for testing
     log_if_error "Could not start bash-shell in docker-container!"
 else
     # Get all local IPs and print smb-share-links
