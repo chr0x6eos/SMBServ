@@ -107,17 +107,17 @@ for (( i=0; i<="$#"; i++))
            FILES=$(cat "${!next_arg}") # Read config file and use all specified files
            log "Loaded following files to serve:\n$FILES" 1
         else
-           log "No valid file for option -f specified!" -1
+           log "No valid file for option -fl specified!" -1
        fi
    elif [[ "${!i}" == "-f" ]] # Specify file to be served
       then
-        next_arg=$(($i+1)) # Get argument after "-sf"
+        next_arg=$(($i+1)) # Get argument after "-f"
         if [[ ! -z "$next_arg" ]] && [[ -f "${!next_arg}" ]] # Check if next parameter is set and a file
          then
             log "The file ${!next_arg} will be served via SMB!" 0
             FILES="${!next_arg}" # Set file to be served via smb
          else
-           log "No valid file for option -sf specified!" -1
+           log "No valid file for option -f specified!" -1
         fi
    elif [[ "${!i}" == "-d" ]] # Specify directory to be served
       then
